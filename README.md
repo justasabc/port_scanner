@@ -1,12 +1,17 @@
 Python Port Scanner 
 ========
-- Work in Progress
-- 2011 - Stephen Gricci
+- 2013.10 - justasabc
+
+Features
+----
+- Run on windows and linux-compatible platform
+- General command line arguments
+- Show prograss bar while processing
+- Support multi-range ip scaning
+- Allow user to save scaning results to file
 
 TODO
 ----
-- General command line arguments arguments (getopt)
 - Allow user to hide progress
-- Write errors to stderr
-BONUS:
-- Rewrite progress bar for greater flexibility
+- Use multi-threading 
+- Support general user interface(GUI)

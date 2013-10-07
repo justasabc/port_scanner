@@ -1,70 +1,92 @@
 #!/usr/bin/env python
-#
-#	Steve Gricci - 2011
-#   Port Scanner
-#   Progress.py is from: http://coreygoldberg.blogspot.com/2010/01/python-command-line-progress-bar-with.html
+"""Python Port Scanner: scan given address for open ports."""
+__version__ = "0.1.0"
+__author__ = "justasabc (zunlin1234@gmail.com)"
+__copyright__ = "(C) 2013-2014 justasabc. GNU GPL 3."
+__contributors__ = ['justasabc','Steve Gricci']
 
-from socket import *
 import sys
-import subprocess
-import re
-from Con import *
-from IPParse import *
+import os
+import argparse
+# user defined
+from utils import *
+from settings import *
+from config import Config
+from ipparser import IPParser
 from progress import ProgressBar
 
-VERSION = '0.4.3'
+args = None
 
-def scan_port(ip, port):
-	s = socket(AF_INET, SOCK_STREAM)
-	setdefaulttimeout(.5)
-	result = s.connect_ex((ip, port))
-	s.close()
-	if (result == 0):
-		return True
-	return False
+# argparse
+def usage(): 
+	parser = argparse.ArgumentParser(description='Python Port Scanner')
+	parser.add_argument("IP", action="store",type=str,help="set ip or ip-range to scan. eg: 1)localhost 2) 192.168.1.200  3) 192.168.200-202 4)192-193.168-170.1-2.200-202")
+	group_mode = parser.add_mutually_exclusive_group()
+	group_mode.add_argument("-c", "--console",action="store_true", help = "run application in console mode(default)" )
+	group_mode.add_argument("-g", "--gui", action = "store_true", help="run application in gui mode(to be done in the future...)")
 
-def usage():
-	if (len(sys.argv) != 2):
-		sys.stderr.write('Usage: scanner.py <ip>')
-		sys.exit(1)
-	return True
+	parser.add_argument("-f", "--FILE",dest="FILE",action="store",type=str,help="save scan result to FILE")
+	group_mode = parser.add_mutually_exclusive_group()
+	group_mode.add_argument("-w", "--well-known",dest="well_known",action="store_true", help = "scan port which is less than well-known port 1024 (default)" )
+	group_mode.add_argument("-m", "--max-port",dest="max_port", action = "store_true", help="scan port which is less than max-port 65535(may be slow)")
+	global args
+	args = parser.parse_args()
 
-def is_host_up(ip):
-	ret = subprocess.call("ping -c 1 -t 1 %s" % ip,
-			shell=True, stdout=open('/dev/null'),
-			stderr=subprocess.STDOUT)
-	if (ret == 0):
-		return True
-	return False
+def process_one(ip,maxport,filename,con):
+	"""
+	process give ip
+	"""
+	lines = ""
+	# Check if the host is up first
+	if (is_host_up(ip) == False):
+		msg = ("DOWN: {0} is down").format(ip)
+		lines = lines + msg + os.linesep
+		print(msg)
+		return	
 
-if __name__ == '__main__':
+	msg = ('Starting scan on host: {0}'.format(ip))
+	lines = lines + msg + os.linesep
+	print(msg)
+	pb = ProgressBar(maxport)
+	open_ports = {}
+	for i in range(maxport+1):
+		pb.update_time(i)
+		if(scan_port(ip, i)):
+			# right justify for sorting
+			open_ports[str(i).rjust(5, '0')] = con.get(i)
+
+	for port in sorted(open_ports.iterkeys()):
+		p5 = str(int(port)).rjust(5,' ')
+		msg = ("Port ({0}): {1}".format( p5, open_ports[port]))
+		lines = lines + msg + os.linesep
+		print(msg)
+
+	if filename:
+		with open(filename,'a') as f:
+			f.write(lines)
+
+def console_main():
 	# Check that an IP/Hostname was sent
 	usage()
+	# get params
+	maxport = WELL_KNOWN 
+	IP = args.IP
+	if args.max_port:
+		maxport = MAX_PORT
+	filename = None
+	if args.FILE and args.FILE.strip():
+		filename = args.FILE.strip()
 	# Load Configuration
-	con = Con('ports.ini');
+	con = Config('ports.ini')
 
-	targetIP = sys.argv[1]
+	parser = IPParser(IP)
+	ips = parser.parse()
+	if len(ips)<1:
+		sys.stderr.write("ERROR: invaid ips"+os.linesep)
+		sys.exit(1)
 
-	ipparse = IPParse(targetIP)
-	ips = ipparse.parse()
-	ipmatch = re.compile('(\d{1,3}\.{1}){3}\d{1,3}')
 	for ip in ips:
-		if (ipmatch.match(ip) == None):
-			ip = gethostbyname(ip)
-		# Check if the host is up first
-		if (is_host_up(ip) == False):
-			print "DOWN: %s is down" % ip
-			continue
+		process_one(ip,maxport,filename,con)
 
-		print 'Starting scan on host: ', ip
-		p = ProgressBar(1024)
-		p.update_time(10)
-		open_ports = {}
-		for i in range(10, 1024):
-			p.update_time(i)
-			if(scan_port(ip, i)):
-				# right justify for sorting
-				open_ports[str(i).rjust(5, '0')] = con.get(i)
-
-		for port in sorted(open_ports.iterkeys()):
-			print "Port (%s): %s" % (str(int(port)).rjust(5, ' '), open_ports[port])
+if __name__ == '__main__':
+	console_main()
