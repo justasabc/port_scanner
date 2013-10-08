@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+#
+# 2011 - Steve Gricci
+# Class to parse IPs passed in numerious ways
+# http://www.deepcode.net/ http://www.gricci.com
+#
+# updated by justasabc 2013-10
 
 class IPParser:
 	"""

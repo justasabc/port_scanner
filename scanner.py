@@ -2,8 +2,8 @@
 """Python Port Scanner: scan given address for open ports."""
 __app__ = "Python Port Scanner"
 __version__ = "0.1.0"
-__author__ = "justasabc (zunlin1234@gmail.com)"
-__copyright__ = "(C) 2013-2014 justasabc. GNU GPL 3."
+__author__ = " Steve Gricci, justasabc"
+__copyright__ = "(C) 2011-2014 Steve Gricci,justasabc. GNU GPL 3."
 __contributors__ = ['justasabc','Steve Gricci']
 
 import sys
