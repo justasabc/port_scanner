@@ -3,6 +3,7 @@
 #  Corey Goldberg - 2010
 #  ascii command-line progress bar with percentage and elapsed time display
 #
+#  updated by justasabc 2013.10
 
 import sys
 import time
@@ -27,7 +28,7 @@ class ProgressBar:
 		if elapsed_secs>self.duration:
 			return
         	self.__update_amount((elapsed_secs / float(self.duration)) * 100.0)
-        	self.prog_bar += '  {0}/{1}'.format(elapsed_secs, self.duration)
+        	self.prog_bar += ' {0}/{1}'.format(elapsed_secs, self.duration)
 		# output prog_bar
 		# \r move cursor to front
 		# \n move cursor to next line

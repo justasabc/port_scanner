@@ -13,7 +13,7 @@ from utils import *
 from settings import *
 from config import Config
 from ipparser import IPParser
-from progress import ProgressBar
+from progressbar import ProgressBar
 
 args = None
 
