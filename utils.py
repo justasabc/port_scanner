@@ -62,6 +62,17 @@ def is_host_up2(ip):
 		return True
 	return False
 
+def inside(dirname,filepath):
+	"""
+         check whether file exists in dir folder 
+	 ./  ./1.txt
+        """
+	absdir = os.path.abspath(dirname)
+	absfile = os.path.abspath(filepath)
+	# make sure absdir2 end with '/'
+	absdir2 = os.path.join(absdir,'')
+	return absfile.startswith(absdir2)
+
 def clear_screen():
 	"""
 	clear screen
