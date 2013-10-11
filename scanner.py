@@ -4,12 +4,12 @@
 import sys
 import os
 # user defined
-from app_args import *
-from utils import *
 from settings import *
-from port_config import PortConfig
-from ipparser import IPParser
-from progressbar import ProgressBar
+from core.app_args import *
+from core.utils import *
+from core.port_config import PortConfig
+from core.ipparser import IPParser
+from core.progressbar import ProgressBar
 
 # show usage
 args = None
@@ -71,7 +71,10 @@ def console_main():
 			sys.stderr.write("ERROR: file must be inside current folder"+os.linesep)
 			sys.exit(1)
 	# Load Configuration
-	con = PortConfig('ports.ini')
+	# use path relative ROOT_DIR
+	portfile = 'core/ports.ini'
+	portpath = os.path.join(ROOT_DIR,portfile)
+	con = PortConfig(portpath)
 
 	parser = IPParser(IP)
 	ips = parser.parse()
@@ -82,5 +85,8 @@ def console_main():
 	for ip in ips:
 		process_one(ip,maxport,filename,con,progress_bar)
 
-if __name__ == '__main__':
+def run():
 	console_main()
+
+if __name__ == "__main__":
+	run()
