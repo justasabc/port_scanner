@@ -1,3 +1,5 @@
 *.pyc
 *.swp
 bug
+tests
+test
