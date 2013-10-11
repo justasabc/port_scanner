@@ -1,0 +1,6 @@
+# settings for application
+
+debug: false
+
+max_port: 65535
+well_known: 1024

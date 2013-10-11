@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-class Config:
+class PortConfig:
 	"""
 	config for all common ports:
 	port:description
@@ -26,7 +26,7 @@ class Config:
 		return
 
 def main():
-	con = Config('ports.ini')
+	con = PortConfig('ports.ini')
 	print(con.total()) # 896    ???
 	print(con.get(22))
 	print(con.get(80))
